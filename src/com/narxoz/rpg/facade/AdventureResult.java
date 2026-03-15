@@ -1,7 +1,6 @@
 package com.narxoz.rpg.facade;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class AdventureResult {
@@ -9,7 +8,10 @@ public class AdventureResult {
     private int rounds;
     private String reward;
     private final List<String> log = new ArrayList<>();
+    private int heroFinalHealth;
+    private int bossFinalHealth;
 
+    // Getters and Setters
     public String getWinner() {
         return winner;
     }
@@ -34,11 +36,27 @@ public class AdventureResult {
         this.reward = reward;
     }
 
+    public List<String> getLog() {
+        return log;
+    }
+
     public void addLine(String line) {
         log.add(line);
     }
 
-    public List<String> getLog() {
-        return Collections.unmodifiableList(log);
+    public int getHeroFinalHealth() {
+        return heroFinalHealth;
+    }
+
+    public void setHeroFinalHealth(int heroFinalHealth) {
+        this.heroFinalHealth = heroFinalHealth;
+    }
+
+    public int getBossFinalHealth() {
+        return bossFinalHealth;
+    }
+
+    public void setBossFinalHealth(int bossFinalHealth) {
+        this.bossFinalHealth = bossFinalHealth;
     }
 }

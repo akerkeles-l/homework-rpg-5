@@ -13,7 +13,6 @@ public class PoisonCoatingDecorator extends ActionDecorator {
 
     @Override
     public int getDamage() {
-        // Poison adds 5 bonus damage over time
         return getWrappedAction().getDamage() + 5;
     }
 
