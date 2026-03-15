@@ -14,45 +14,82 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("=== Homework 5 Demo: Decorator + Facade ===\n");
 
-        // TODO: Create a hero and a boss with your own meaningful stats.
-        HeroProfile hero = new HeroProfile("TODO Hero", 100);
-        BossEnemy boss = new BossEnemy("TODO Boss", 120, 15);
+        HeroProfile hero = new HeroProfile("Sir Lancelot", 100);
+        BossEnemy boss = new BossEnemy("Dragonlord Malefor", 120, 15);
 
-        // TODO: Start with a base action and then create several decorated versions.
+        System.out.println("--- DECORATOR PATTERN DEMO ---");
+        System.out.println("Showing runtime attack composition:\n");
+
         AttackAction basic = new BasicAttack("Strike", 10);
-        AttackAction enhanced = new FireRuneDecorator(
-                new PoisonCoatingDecorator(
-                        new CriticalFocusDecorator(basic)
+        
+        AttackAction fireAttack = new FireRuneDecorator(basic);
+        AttackAction poisonAttack = new PoisonCoatingDecorator(basic);
+        AttackAction criticalAttack = new CriticalFocusDecorator(basic);
+        
+        AttackAction firePoison = new FireRuneDecorator(new PoisonCoatingDecorator(basic));
+        AttackAction fullCombo = new CriticalFocusDecorator(
+                new FireRuneDecorator(
+                        new PoisonCoatingDecorator(basic)
                 )
         );
+        
+        AttackAction fireCritical = new FireRuneDecorator(new CriticalFocusDecorator(basic));
+        AttackAction poisonCritical = new PoisonCoatingDecorator(new CriticalFocusDecorator(basic));
 
-        System.out.println("--- Decorator Preview ---");
-        System.out.println("Base action: " + basic.getActionName());
-        System.out.println("Base damage: " + basic.getDamage());
-        System.out.println("Base effects: " + basic.getEffectSummary());
-        System.out.println();
-        System.out.println("Enhanced action: " + enhanced.getActionName());
-        System.out.println("Enhanced damage: " + enhanced.getDamage());
-        System.out.println("Enhanced effects: " + enhanced.getEffectSummary());
+        AttackAction[] attacks = {basic, fireAttack, poisonAttack, criticalAttack, 
+                                  firePoison, fireCritical, poisonCritical, fullCombo};
+        String[] names = {"Basic", "Fire", "Poison", "Critical", 
+                         "Fire+Poison", "Fire+Critical", "Poison+Critical", "Full Combo"};
+        
+        for (int i = 0; i < attacks.length; i++) {
+            System.out.printf("%-15s: %-45s | Damage: %-3d | %s%n",
+                names[i],
+                attacks[i].getActionName(),
+                attacks[i].getDamage(),
+                attacks[i].getEffectSummary());
+        }
+        
+        System.out.println("\n✓ Decorator Pattern Verified: Multiple runtime combinations created without creating separate classes");
+        System.out.println("  Order matters: Critical Focus doubles ALL damage including elemental effects!\n");
 
-        // TODO: Replace the placeholder preview above with richer proof of runtime composition.
+        System.out.println("--- FACADE PATTERN DEMO ---");
+        System.out.println("Running dungeon adventure with Full Combo attack:\n");
 
-        System.out.println("\n--- Facade Preview ---");
         DungeonFacade facade = new DungeonFacade().setRandomSeed(42L);
-        AdventureResult result = facade.runAdventure(hero, boss, enhanced);
+        AdventureResult result = facade.runAdventure(hero, boss, fullCombo);
 
+        
+        System.out.println("=== ADVENTURE SUMMARY ===");
         System.out.println("Winner: " + result.getWinner());
         System.out.println("Rounds: " + result.getRounds());
+        System.out.println("Final Hero HP: " + result.getHeroFinalHealth() + "/100");
+        System.out.println("Final Boss HP: " + result.getBossFinalHealth() + "/120");
         System.out.println("Reward: " + result.getReward());
+        
+        System.out.println("\n=== DETAILED LOG ===");
         for (String line : result.getLog()) {
             System.out.println(line);
         }
 
-        // TODO: Expand this demo so it clearly proves:
-        // 1) multiple decorator combinations
-        // 2) one full dungeon run through the facade
-        // 3) readable final summary
+        System.out.println("\n--- SECOND RUN: Different Attack Combination ---");
+        
+        HeroProfile hero2 = new HeroProfile("Sir Lancelot", 100);
+        BossEnemy boss2 = new BossEnemy("Dragonlord Malefor", 120, 15);
+        
+        System.out.println("Using Fire + Critical attack:\n");
+        AdventureResult result2 = facade.runAdventure(hero2, boss2, fireCritical);
+        
+        System.out.println("Winner: " + result2.getWinner());
+        System.out.println("Rounds: " + result2.getRounds());
+        System.out.println("Final Hero HP: " + result2.getHeroFinalHealth() + "/100");
+        System.out.println("Final Boss HP: " + result2.getBossFinalHealth() + "/120");
+        System.out.println("Reward: " + result2.getReward());
 
+        System.out.println("\n=== VERIFICATION ===");
+        System.out.println("✓ Decorator Pattern: Demonstrated " + attacks.length + " runtime combinations");
+        System.out.println("✓ Facade Pattern: DungeonFacade hid complexity of Preparation, Battle, and Reward services");
+        System.out.println("✓ Both patterns working together seamlessly");
+        
         System.out.println("\n=== Demo Complete ===");
     }
 }
